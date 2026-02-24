@@ -20,7 +20,4 @@ Thumbs.db
 
 # Logs
 *.log
-
-# Misc
-.history/
-*.bak
+git init
