@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CinemaGear Pro Rentals</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #0a0a0a;
+            --bg-card: #141414;
+            --accent-color: #FFB400; 
+            --text-main: #f0f0f0;
+            --text-muted: #888;
+            --border: #222;
+            --font-main: 'Inter', sans-serif;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            font-family: var(--font-main);
+            overflow-x: hidden;
+        }
+
+        /* --- NAVIGATION --- */
+        nav {
+            background-color: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 0.8rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .logo { font-size: 1.2rem; font-weight: 700; letter-spacing: 1px; }
+        .logo span { color: var(--accent-color); }
+
+        .nav-center { display: flex; align-items: center; gap: 1rem; flex-grow: 1; justify-content: center; max-width: 600px; margin: 0 2rem; }
+
+        /* SEARCH BAR */
+        .search-container { position: relative; width: 100%; }
+        .search-bar {
+            width: 100%;
+            background: #1a1a1a;
+            border: 1px solid var(--border);
+            padding: 0.6rem 1rem;
+            border-radius: 20px;
+            color: white;
+            outline: none;
+            transition: border 0.3s;
+        }
+        .search-bar:focus { border-color: var(--accent-color); }
+
+        /* LOCATION PICKER */
+        .location-picker { color: var(--text-muted); font-size: 0.85rem; display: flex; align-items: center; gap: 5px; cursor: pointer; white-space: nowrap; }
+        .location-picker:hover { color: var(--accent-color); }
+
+        .nav-right { display: flex; align-items: center; gap: 1rem; }
+
+        /* --- BUTTONS & DROPDOWNS --- */
+        .contact-dropdown { position: relative; }
+        .btn-outline { background: transparent; border: 1px solid var(--border); color: white; padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer; }
+        .btn-outline:hover { border-color: var(--accent-color); color: var(--accent-color); }
+
+        .dropdown-content {
+            display: none; position: absolute; right: 0; top: 100%; margin-top: 10px;
+            background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px; width: 220px;
+        }
+        .contact-dropdown:hover .dropdown-content { display: block; }
+        .dropdown-content a { color: white; text-decoration: none; padding: 12px; display: block; font-size: 0.9rem; }
+        .dropdown-content a:hover { background: #1f1f1f; color: var(--accent-color); }
+
+        .quote-cart { background: var(--accent-color); color: black; font-weight: 700; padding: 0.6rem 1.2rem; border-radius: 6px; cursor: pointer; }
+
+        /* --- CATEGORY TABS --- */
+        .filter-tabs { display: flex; justify-content: center; gap: 1rem; padding: 2rem 0 0; flex-wrap: wrap; }
+        .tab { 
+            padding: 0.5rem 1.5rem; border-radius: 20px; border: 1px solid var(--border); 
+            cursor: pointer; font-size: 0.9rem; transition: 0.3s;
+        }
+        .tab.active, .tab:hover { background: var(--accent-color); color: black; border-color: var(--accent-color); }
+
+        /* --- EQUIPMENT GRID --- */
+        .container { padding: 2rem 5% 5rem; max-width: 1400px; margin: 0 auto; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; }
+
+        .card { 
+            background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; 
+            overflow: hidden; transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); position: relative;
+        }
+        .card:hover { transform: translateY(-8px); border-color: #444; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+
+        .card-img { 
+            height: 180px; background: #1a1a1a; display: flex; align-items: center; justify-content: center;
+            font-size: 0.8rem; color: #444; position: relative;
+        }
+        .badge { position: absolute; top: 10px; left: 10px; background: rgba(0,0,0,0.7); padding: 2px 8px; border-radius: 4px; font-size: 0.7rem; color: var(--accent-color); border: 1px solid var(--accent-color); }
+
+        .card-content { padding: 1.2rem; }
+        .card-title { font-size: 1.1rem; margin-bottom: 5px; font-weight: 600; }
+        .card-acc { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem; line-height: 1.4; height: 38px; overflow: hidden; }
+
+        .card-footer { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border); padding-top: 1rem; }
+        .price { font-size: 1.1rem; font-weight: 700; color: white; }
+        .price span { font-size: 0.7rem; color: var(--text-muted); }
+
+        .btn-add { background: transparent; border: 1px solid var(--accent-color); color: var(--accent-color); padding: 0.4rem 0.8rem; border-radius: 4px; cursor: pointer; font-weight: 600; font-size: 0.8rem; }
+        .btn-add:hover { background: var(--accent-color); color: black; }
+
+        @media (max-width: 768px) {
+            .nav-center { display: none; } /* Hide search on mobile, or move to a row below */
+            .logo { font-size: 1rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div class="logo">CINEMA<span>GEAR</span></div>
+        
+        <div class="nav-center">
+            <div class="location-picker">
+                📍 <select style="background:none; color:inherit; border:none; outline:none; cursor:pointer;">
+                    <option style="background:#000">Giza, Egypt</option>
+                    <option style="background:#000">Cairo Branch</option>
+                    <option style="background:#000">On-Set Delivery</option>
+                </select>
+            </div>
+            <div class="search-container">
+                <input type="text" class="search-bar" id="searchInput" placeholder="Search cameras, lenses, lights..." onkeyup="filterGear()">
+            </div>
+        </div>
+
+        <div class="nav-right">
+            <div class="contact-dropdown">
+                <button class="btn-outline">Contact</button>
+                <div class="dropdown-content">
+                    <a href="tel:+201030554531">📞 +20 103 055 4531</a>
+                    <a href="mailto:mohapmostafa29@gmail.com">✉️ Email Us</a>
+                    <a href="https://www.instagram.com/muhab.mp4/" target="_blank">📸 Instagram</a>
+                </div>
+            </div>
+            <div class="quote-cart" id="quoteCount">Quote (0)</div>
+        </div>
+    </nav>
+
+    <div class="filter-tabs">
+        <div class="tab active" onclick="filterCategory('All', this)">All Gear</div>
+        <div class="tab" onclick="filterCategory('Camera Body', this)">Cameras</div>
+        <div class="tab" onclick="filterCategory('Lenses', this)">Lenses</div>
+        <div class="tab" onclick="filterCategory('Lighting', this)">Lighting</div>
+        <div class="tab" onclick="filterCategory('Support', this)">Support</div>
+    </div>
+
+    <main class="container">
+        <div class="grid" id="gearGrid">
+            </div>
+    </main>
+
+    <script>
+        const inventory = [
+            { id: 1, name: "ARRI Alexa Mini LF", type: "Camera Body", acc: "PL/LPL Mount, Cage, 3x 1TB Cards", rate: 1500 },
+            { id: 2, name: "RED V-Raptor 8K", type: "Camera Body", acc: "RF Mount, Expander Module, 2x 660GB Cards", rate: 1200 },
+            { id: 3, name: "Cooke S4/i Prime Set", type: "Lenses", acc: "18, 25, 35, 50, 75, 100mm", rate: 800 },
+            { id: 4, name: "Arri Signature Primes", type: "Lenses", acc: "Full Set (LPL Mount)", rate: 1200 },
+            { id: 5, name: "Aputure 600d Pro", type: "Lighting", acc: "Reflector, Case, F10 Fresnel", rate: 120 },
+            { id: 6, name: "Astera Titan Tubes", type: "Lighting", acc: "8-Light Kit with Charging Case", rate: 200 },
+            { id: 7, name: "Easyrig Vario 5", type: "Support", acc: "Gimbal Vest, Flowcine Serene", rate: 150 },
+            { id: 8, name: "Freefly Movi Pro", type: "Support", acc: "MIMIC, 6x Batteries, Bushman Mount", rate: 250 }
+        ];
+
+        let count = 0;
+
+        function displayGear(items) {
+            const grid = document.getElementById('gearGrid');
+            grid.innerHTML = items.map(item => `
+                <div class="card" data-type="${item.type}">
+                    <div class="card-img">
+                        <span class="badge">Available</span>
+                        [ ${item.name} IMAGE ]
+                    </div>
+                    <div class="card-content">
+                        <div class="card-title">${item.name}</div>
+                        <div class="card-acc">${item.acc}</div>
+                        <div class="card-footer">
+                            <div class="price">$${item.rate}<span>/day</span></div>
+                            <button class="btn-add" onclick="updateQuote()">Add to Quote</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function filterGear() {
+            const val = document.getElementById('searchInput').value.toLowerCase();
+            const filtered = inventory.filter(item => 
+                item.name.toLowerCase().includes(val) || 
+                item.type.toLowerCase().includes(val)
+            );
+            displayGear(filtered);
+        }
+
+        function filterCategory(cat, el) {
+            // Update UI tabs
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            el.classList.add('active');
+
+            if(cat === 'All') {
+                displayGear(inventory);
+            } else {
+                const filtered = inventory.filter(item => item.type === cat);
+                displayGear(filtered);
+            }
+        }
+
+        function updateQuote() {
+            count++;
+            document.getElementById('quoteCount').innerText = `Quote (${count})`;
+        }
+
+        // Initialize
+        displayGear(inventory);
+    </script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+const inventory = [
+    { id: 1, name: "ARRI Alexa Mini LF", type: "Camera Body", acc: "PL Mount, MVF-2, 3x 1TB Cards", rate: 1500, image: "images/cameras/alexa.jpg" },
+    { id: 2, name: "RED V-Raptor 8K", type: "Camera Body", acc: "RF Mount, 2x 660GB Cards, Cage", rate: 1200, image: "images/cameras/red.png" },
+    { id: 3, name: "Cooke S4/i Prime Set", type: "Lenses", acc: "18, 25, 35, 50, 75, 100mm", rate: 800, image: "images/lenses/cooke.png" },
+    { id: 4, name: "Aputure 600d Pro", type: "Lighting", acc: "F10 Fresnel, Barn Doors, Case", rate: 120, image: "images/lighting/aputure.png" },
+    { id: 5, name: "Astera Titan Tubes", type: "Lighting", acc: "8-Light Kit, Charging Case", rate: 200, image: "images/lighting/astera.png" },
+    { id: 6, name: "DJI Ronin 2", type: "Support", acc: "Pro Combo, 6x Batteries", rate: 350, image: "images/support/ronin2.png" }
+    { id: 7, name: "Sony A7S III", type:"Camera Body", acc: "4x Batteries, 2x 160GB CFexpress Type A",  rate: 80, image: "images/cameras/sony-a7s3.png"},
+    { 
+        id: 8, 
+        name: "Sigma 24-70mm f/2.8", 
+        type: "Lenses", 
+        acc: "E-mount, Lens Hood, UV Filter", 
+        rate: 40, 
+        image: "images/lenses/sigma-24-70.png" 
+    }
+];

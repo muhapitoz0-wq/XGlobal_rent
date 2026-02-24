@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Global Rental House | Cinema Equipment</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/png" href="images/logo.png">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+<nav>    <div class="logo"><img src="images/logo.png" alt="Global Logo"></div>
+
+    <div class="nav-center">
+        <div class="location-picker">
+            📍 <select>
+                <option>sheikh zayed, Egypt</option>
+            
+                <option>On-Set Delivery</option>
+            </select>
+        </div>
+        <div class="search-container">
+            <input type="text" class="search-bar" id="searchInput" placeholder="Search cameras, lenses, lights..." onkeyup="filterGear()">
+        </div>
+    </div>
+
+    <div class="nav-right">
+        <div class="contact-dropdown">
+            <button class="btn-outline">Contact Us ▼</button>
+            <div class="dropdown-content">
+                <a href="tel:+201030554531">📞 +20 103 055 4531</a>
+                <a href="mailto:mohapmostafa29@gmail.com">✉️ Email Us</a>
+                <a href="https://wa.me/201030554531" target="_blank">💬 WhatsApp</a>
+                <a href="https://www.instagram.com/muhab.mp4/" target="_blank">📸 Instagram</a>
+            </div>
+        </div>
+
+        <div class="quote-cart" id="quoteBtn">Quote List (0)</div>
+    </div>
+
+</nav>
+
+    <div class="filter-tabs">
+        <div class="tab active" onclick="filterCategory('All', this)">All Gear</div>
+        <div class="tab" onclick="filterCategory('Camera Body', this)">Cameras</div>
+        <div class="tab" onclick="filterCategory('Lenses', this)">Lenses</div>
+        <div class="tab" onclick="filterCategory('Lighting', this)">Lighting</div>
+        <div class="tab" onclick="filterCategory('Support', this)">Support</div>
+    </div>
+
+    <main class="container">
+        <div class="grid" id="gearGrid">
+            </div>
+    </main>
+
+    <div id="quoteModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="toggleModal()">&times;</span>
+            <h2>Rental Request</h2>
+            <p>Please provide your details to receive a formal quote.</p>
+            <form id="quoteForm" data-endpoint="https://example.com/api/quotes">
+                <div class="form-group">
+                    <label for="fullName">Full Name</label>
+                    <input id="fullName" name="fullName" type="text" placeholder="Your Name" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input id="email" name="email" type="email" placeholder="email@example.com" required>
+                </div>
+                <div style="display: flex; gap: 1rem;">
+                    <div class="form-group" style="flex: 1;">
+                        <label for="startDate">Start Date</label>
+                        <input id="startDate" name="startDate" type="date" required>
+                    </div>
+                    <div class="form-group" style="flex: 1;">
+                        <label for="endDate">End Date</label>
+                        <input id="endDate" name="endDate" type="date" required>
+                    </div>
+                </div>
+                <div id="modalSummary"></div>
+                <button type="submit" class="btn-submit">Submit Quote Request</button>
+            </form>
+        </div>
+    </div>
+    <a href="https://wa.me/201030554531" class="whatsapp-float" target="_blank">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp">
+    <span>Chat with us</span>
+</a>
+
+    <!-- Toast notification -->
+    <div id="toast" class="toast" aria-live="polite" aria-atomic="true"></div>
+
+    <script src="script.js"></script>
+</body>
+</html>
