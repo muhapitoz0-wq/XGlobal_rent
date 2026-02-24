@@ -7,6 +7,25 @@ const inventory = [
     { id: 6, name: "DJI Ronin 2", type: "Support", acc: "Pro Combo, 6x Batteries", rate: 350, image: "images/support/ronin2.png" },
     { id: 7, name: "Sony A7S III", type: "Camera Body", acc: "4x Batteries, 2x 160GB CFexpress Type A", rate: 80, image: "images/cameras/sony-a7s3.png" },
     { id: 8, name: "Sigma 24-70mm f/2.8", type: "Lenses", acc: "E-mount, Lens Hood, UV Filter", rate: 40, image: "images/lenses/sigma-24-70.png" },
+    { id: 9, name: "Panavision Primo Prime Set", type: "Lenses", acc: "14, 21, 25, 32, 40, 50, 75, 100mm", rate: 1000, image: "images/lenses/panavision.png" },
+    { id: 10, name: "Canon C500 Mark II", type: "Camera Body", acc: "PL/EF Mount, 2x Batteries, V-Mount Adapter", rate: 300, image: "images/cameras/canon-c500.png" },
+    { id: 11, name: "Zeiss CP.3 6-Lens Set", type: "Lenses", acc: "21, 25, 35, 50, 85, 135mm", rate: 250, image: "images/lenses/zeiss-cp3.png" },
+    { id: 12, name: "Blackmagic Pocket 6K Pro", type: "Camera Body", acc: "4x Batteries, Cage, 2x 256GB Cards", rate: 70, image: "images/cameras/bmpcc6k.png" },
+    { id: 13, name: "Aputure LS 600x Pro", type: "Lighting", acc: "Bowens Mount, Softbox, Case", rate: 180, image: "images/lighting/aputure-ls600x.png" },
+    { id: 14, name: "Kino Flo Diva-Lite 20", type: "Lighting", acc: "2-Light Kit, Stands", rate: 60, image: "images/lighting/kinoflo-diva.png" },
+    { id: 15, name: "Manfrotto Tripod Kit", type: "Support", acc: "Tripod, Fluid Head, Carry Case", rate: 25, image: "images/support/manfrotto-tripod.png" },
+    { id: 16, name: "Sachtler Flowtech 100", type: "Support", acc: "Tripod + Head, Spreader", rate: 90, image: "images/support/sachtler-flowtech.png" },
+    { id: 17, name: "DJI Inspire 2 Drone", type: "Support", acc: "Pro Combo, 2x Batteries, Controller", rate: 400, image: "images/support/inspire2.png" },
+    { id: 18, name: "Nikon Z9", type: "Camera Body", acc: "2x Batteries, 1x 1TB CFexpress", rate: 120, image: "images/cameras/nikon-z9.png" },
+    { id: 19, name: "Tokina Cinema Vista 135mm", type: "Lenses", acc: "T/1.5, PL Mount", rate: 50, image: "images/lenses/tokina-135.png" },
+    { id: 20, name: "Fujinon MK 18-55mm", type: "Lenses", acc: "E-mount, Follow Focus", rate: 60, image: "images/lenses/fujinon-mk.png" },
+    { id: 21, name: "Mole-Richardson 200W Baby", type: "Lighting", acc: "Stand, Case", rate: 30, image: "images/lighting/mole-200.png" },
+    { id: 22, name: "Rosco LED Panel", type: "Lighting", acc: "2x Panel Kit, Dimming", rate: 45, image: "images/lighting/rosco-led.png" },
+    { id: 23, name: "Steadicam Pro", type: "Support", acc: "Vest, Arm, Sled", rate: 120, image: "images/support/steadicam-pro.png" },
+    { id: 24, name: "Zoom F8n Recorder", type: "Audio", acc: "8-Track Recorder, 4x Batteries", rate: 90, image: "images/audio/zoom-f8n.png" },
+    { id: 25, name: "Sennheiser MKH416", type: "Audio", acc: "Rycote, XLR Cable", rate: 35, image: "images/audio/mkh416.png" },
+    { id: 26, name: "ARRI Master Prime 50mm", type: "Lenses", acc: "PL Mount, High Speed", rate: 600, image: "images/lenses/arri-master-prime-50.png" },
+    { id: 27, name: "SmallHD 703 Bolt Monitor", type: "Support", acc: "Wireless RX, Sun Hood", rate: 40, image: "images/support/smallhd-703.png" },
 ];
 
 const quoteList = {}; // map of itemId -> quantity
@@ -28,12 +47,35 @@ function loadQuote() {
 }
 
 // DISPLAY GEAR
+// Generate a small SVG placeholder as a data URL. Uses item name/type to create a contextual placeholder.
+function makePlaceholder(name, type) {
+    const shortName = (name || '').split(' ').slice(0,4).join(' ');
+    const colorMap = {
+        'Camera Body': '#2b2f77',
+        'Lenses': '#5a2b2b',
+        'Lighting': '#7a5a00',
+        'Support': '#114411',
+        'Audio': '#4a2b9a'
+    };
+    const bg = colorMap[type] || '#333333';
+    const fg = '#ffffff';
+    const svg = `
+<svg xmlns='http://www.w3.org/2000/svg' width='600' height='400'>
+  <rect width='100%' height='100%' fill='${bg}' />
+  <g fill='${fg}' font-family='Segoe UI, Roboto, -apple-system, sans-serif'>
+    <text x='50%' y='46%' text-anchor='middle' font-size='28' font-weight='700'>${type}</text>
+    <text x='50%' y='62%' text-anchor='middle' font-size='20'>${shortName}</text>
+  </g>
+</svg>`;
+    return 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(svg);
+}
+
 function displayGear(items) {
     const grid = document.getElementById('gearGrid');
     grid.innerHTML = items.map(item => `
         <div class="card">
             <div class="card-img-container">
-                <img src="${item.image}" alt="${item.name}" onerror="this.src='https://via.placeholder.com/300x200?text=Global+Rental+House'">
+                <img src="${item.image}" loading="lazy" alt="${item.name}" onerror="this.onerror=null;this.src='${makePlaceholder(item.name, item.type)}'">
             </div>
             <span class="item-badge" data-id="${item.id}"></span>
             <div class="card-content">

@@ -181,7 +181,7 @@ nav {
 
 /* GRID & CARDS */
 .container { padding: 0 5% 5rem; max-width: 1400px; margin: 0 auto; }
-.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; }
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.5rem; }
 
 .card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; transition: 0.3s; }
 .card:hover { transform: translateY(-5px); border-color: #444; }
