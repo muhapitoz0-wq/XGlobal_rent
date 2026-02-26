@@ -3,85 +3,190 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Global Rental House | Cinema Equipment</title>
+    <title>Global Rental House | Premium Cinema Equipment</title>
     <link rel="stylesheet" href="style.css">
     <link rel="icon" type="image/png" href="images/logo.png">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;600;700;800&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-<nav>    <div class="logo"><img src="images/logo.png" alt="Global Logo"></div>
+<header class="navbar">
+    <div class="nav-wrapper">
+        <div class="logo-section">
+            <img src="images/logo.png" alt="Global Rental House" class="logo">
+            <span class="brand-name">GLOBAL RENTAL HOUSE</span>
+        </div>
 
-    <div class="nav-center">
-        <div class="location-picker">
-            📍 <select>
-                <option>sheikh zayed, Egypt</option>
+        <div class="search-wrapper">
+            <input type="text" class="search-bar" id="searchInput" placeholder="Search cameras, lenses, lighting..." onkeyup="filterGear()">
+            <svg class="search-icon" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M9 17C13.4183 17 17 13.4183 17 9C17 4.58172 13.4183 1 9 1C4.58172 1 1 4.58172 1 9C1 13.4183 4.58172 17 9 17Z" stroke="currentColor" stroke-width="2"/>
+                <path d="M19 19L14.65 14.65" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+        </div>
+
+        <div class="nav-actions">
+            <div class="contact-dropdown">
+                <button class="btn-contact">Contact Us</button>
+                <div class="dropdown-content">
+                    <a href="tel:+201030554531">📞 +20 103 055 4531</a>
+                    <a href="mailto:mohapmostafa29@gmail.com">✉️ Email Us</a>
+                    <a href="https://wa.me/201030554531" target="_blank">💬 WhatsApp</a>
+                    <a href="https://www.instagram.com/muhab.mp4/" target="_blank">📸 Instagram</a>
+                </div>
+            </div>
+
+            <button class="quote-cart" id="quoteBtn">
+                <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                    <path d="M1 1H4L6.68 13.39C6.77251 13.8354 7.02033 14.2282 7.38039 14.5017C7.74045 14.7753 8.18016 14.9131 8.63 14.9H15.55C16.3995 14.9 17.1362 14.3564 17.3243 13.502L18 9.5M8.75 18C8.19772 18 7.75 17.5523 7.75 17C7.75 16.4477 8.19772 16 8.75 16C9.30228 16 9.75 16.4477 9.75 17C9.75 17.5523 9.30228 18 8.75 18ZM15.75 18C15.1977 18 14.75 17.5523 14.75 17C14.75 16.4477 15.1977 16 15.75 16C16.3023 16 16.75 16.4477 16.75 17C16.75 17.5523 16.3023 18 15.75 18Z" stroke="currentColor" stroke-width="1.5" fill="none"/>
+                </svg>
+                <span id="cartCount">0</span>
+            </button>
+        </div>
+    </div>
+</header>
+
+<section class="hero">
+    <div class="hero-content">
+        <h1 class="hero-title">Premium Cinema Equipment Rental</h1>
+        <p class="hero-subtitle">Professional-grade cameras, lenses, and lighting for your next production</p>
+        <div class="hero-buttons">
+            <button class="btn-primary" onclick="document.querySelector('.filter-tabs').scrollIntoView({behavior: 'smooth'})">Explore Equipment</button>
+            <button class="btn-secondary" onclick="document.querySelector('.contact-dropdown button').click()">Get in Touch</button>
+        </div>
+    </div>
+    <div class="hero-gradient"></div>
+</section>
+
+<section class="filter-section">
+    <div class="filter-container">
+        <h2 class="section-title">Browse Equipment</h2>
+        <div class="filter-tabs">
+            <div class="tab active" onclick="filterCategory('All', this)">All Equipment</div>
+            <div class="tab" onclick="filterCategory('Camera Body', this)">Cameras</div>
+            <div class="tab" onclick="filterCategory('Lenses', this)">Lenses</div>
+            <div class="tab" onclick="filterCategory('Lighting', this)">Lighting</div>
+            <div class="tab" onclick="filterCategory('Support', this)">Support</div>
+        </div>
+        
+        <div class="advanced-filters">
+            <button class="filter-toggle" onclick="toggleAdvancedFilters()">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                    <path d="M2 4H14M4 8H12M6 12H10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                Filters
+            </button>
             
-                <option>On-Set Delivery</option>
-            </select>
-        </div>
-        <div class="search-container">
-            <input type="text" class="search-bar" id="searchInput" placeholder="Search cameras, lenses, lights..." onkeyup="filterGear()">
-        </div>
-    </div>
-
-    <div class="nav-right">
-        <div class="contact-dropdown">
-            <button class="btn-outline">Contact Us ▼</button>
-            <div class="dropdown-content">
-                <a href="tel:+201030554531">📞 +20 103 055 4531</a>
-                <a href="mailto:mohapmostafa29@gmail.com">✉️ Email Us</a>
-                <a href="https://wa.me/201030554531" target="_blank">💬 WhatsApp</a>
-                <a href="https://www.instagram.com/muhab.mp4/" target="_blank">📸 Instagram</a>
+            <div class="filters-panel" id="filtersPanel" style="display: none;">
+                <div class="filter-group">
+                    <label>Price Range: $<span id="priceDisplay">0</span> - $<span id="priceDisplay2">2000</span>/day</label>
+                    <input type="range" id="priceRange" min="0" max="2000" value="2000" onchange="applyAdvancedFilters()">
+                </div>
+                
+                <div class="filter-group">
+                    <label>Stock Status</label>
+                    <div class="filter-checkboxes">
+                        <label><input type="checkbox" value="Available" onchange="applyAdvancedFilters()"> Available</label>
+                        <label><input type="checkbox" value="Limited" onchange="applyAdvancedFilters()"> Limited Stock</label>
+                    </div>
+                </div>
+                
+                <button class="btn-secondary" onclick="resetFilters()" style="width: 100%; margin-top: 1rem;">Reset Filters</button>
             </div>
         </div>
+        </div>
+    </section>
 
-        <div class="quote-cart" id="quoteBtn">Quote List (0)</div>
-    </div>
+<main class="equipment-showcase">
+    <div class="grid" id="gearGrid"></div>
+</main>
 
-</nav>
-
-    <div class="filter-tabs">
-        <div class="tab active" onclick="filterCategory('All', this)">All Gear</div>
-        <div class="tab" onclick="filterCategory('Camera Body', this)">Cameras</div>
-        <div class="tab" onclick="filterCategory('Lenses', this)">Lenses</div>
-        <div class="tab" onclick="filterCategory('Lighting', this)">Lighting</div>
-        <div class="tab" onclick="filterCategory('Support', this)">Support</div>
-    </div>
-
-    <main class="container">
-        <div class="grid" id="gearGrid">
+<!-- EQUIPMENT DETAILS MODAL -->
+<div id="detailsModal" class="modal">
+    <div class="modal-overlay" onclick="closeDetailsModal()"></div>
+    <div class="modal-content modal-large">
+        <div class="modal-header">
+            <h2 id="detailsTitle">Equipment Details</h2>
+            <span class="close-modal" onclick="closeDetailsModal()">×</span>
+        </div>
+        <div class="details-container">
+            <div class="details-image">
+                <img id="detailsImage" src="" alt="Equipment">
+                <button class="btn-favorite" id="favBtn" onclick="toggleFavorite()">♡</button>
             </div>
-    </main>
+            <div class="details-info">
+                <div class="details-badge" id="stockBadge"></div>
+                <p id="detailsType" class="details-type"></p>
+                <p id="detailsAcc" class="details-specs"></p>
+                <div class="details-price-section">
+                    <div class="price-display">
+                        <span class="price-label">Daily Rate:</span>
+                        <span id="detailsPrice" class="price-large">$0</span>
+                    </div>
+                </div>
+                <button class="btn-primary" onclick="addFromDetailsAndClose()" style="width: 100%; margin-top: 1rem;">Add to Quote</button>
+            </div>
+        </div>
+    </div>
+</div>
 
-    <div id="quoteModal" class="modal">
-        <div class="modal-content">
-            <span class="close-modal" onclick="toggleModal()">&times;</span>
+<!-- FAVORITES MODAL -->
+<div id="favoritesModal" class="modal">
+    <div class="modal-overlay" onclick="closeFavoritesModal()"></div>
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>Favorite Equipment</h2>
+            <span class="close-modal" onclick="closeFavoritesModal()">×</span>
+        </div>
+        <div id="favoritesList" class="favorites-list"></div>
+    </div>
+</div>
+<div id="quoteModal" class="modal">
+    <div class="modal-overlay" onclick="toggleModal()"></div>
+    <div class="modal-content">
+        <div class="modal-header">
             <h2>Rental Request</h2>
-            <p>Please provide your details to receive a formal quote.</p>
-            <form id="quoteForm" data-endpoint="https://example.com/api/quotes">
-                <div class="form-group">
-                    <label for="fullName">Full Name</label>
-                    <input id="fullName" name="fullName" type="text" placeholder="Your Name" required>
-                </div>
-                <div class="form-group">
-                    <label for="email">Email Address</label>
-                    <input id="email" name="email" type="email" placeholder="email@example.com" required>
-                </div>
-                <div style="display: flex; gap: 1rem;">
-                    <div class="form-group" style="flex: 1;">
-                        <label for="startDate">Start Date</label>
-                        <input id="startDate" name="startDate" type="date" required>
-                    </div>
-                    <div class="form-group" style="flex: 1;">
-                        <label for="endDate">End Date</label>
-                        <input id="endDate" name="endDate" type="date" required>
-                    </div>
-                </div>
-                <div id="modalSummary"></div>
-                <button type="submit" class="btn-submit">Submit Quote Request</button>
-            </form>
+            <span class="close-modal" onclick="toggleModal()">×</span>
         </div>
+        <p class="modal-subtitle">Provide your details to receive a formal quote</p>
+        <form id="quoteForm" data-endpoint="https://example.com/api/quotes">
+            <div class="form-group">
+                <label for="fullName">Full Name</label>
+                <input id="fullName" name="fullName" type="text" placeholder="Your Name" required>
+            </div>
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <input id="email" name="email" type="email" placeholder="email@example.com" required>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="startDate">Start Date</label>
+                    <input id="startDate" name="startDate" type="date" required>
+                </div>
+                <div class="form-group">
+                    <label for="endDate">End Date</label>
+                    <input id="endDate" name="endDate" type="date" required>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="location">Pickup Location</label>
+                <select id="location" name="location" required class="location-select">
+                    <option value="">Select a location</option>
+                    <option value="Downtown Cairo">Downtown Cairo</option>
+                    <option value="New Cairo">New Cairo</option>
+                    <option value="6th of October">6th of October</option>
+                    <option value="Sheikh Zayed City">Sheikh Zayed City</option>
+                    <option value="Delivery (Cairo)">Delivery (Cairo)</option>
+                    <option value="Delivery (Outside Cairo)">Delivery (Outside Cairo)</option>
+                </select>
+            </div>
+            <div id="modalSummary" class="quote-summary"></div>
+            <div style="display:flex; gap:0.6rem; align-items:center;">
+                <button type="button" class="btn-secondary" onclick="copyQuoteToClipboard()">Copy Quote</button>
+                <button type="submit" class="btn-primary">Submit Quote Request</button>
+            </div>
+        </form>
     </div>
+</div>
     <a href="https://wa.me/201030554531" class="whatsapp-float" target="_blank">
     <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp">
     <span>Chat with us</span>
@@ -90,6 +195,9 @@
     <!-- Toast notification -->
     <div id="toast" class="toast" aria-live="polite" aria-atomic="true"></div>
 
+    <button id="backToTop" class="back-to-top" onclick="scrollToTop()" aria-label="Back to top">↑</button>
+
     <script src="script.js"></script>
+    <script src="features.js"></script>
 </body>
 </html>

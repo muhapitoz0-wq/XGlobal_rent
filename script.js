@@ -26,10 +26,69 @@ const inventory = [
     { id: 25, name: "Sennheiser MKH416", type: "Audio", acc: "Rycote, XLR Cable", rate: 35, image: "images/audio/mkh416.png" },
     { id: 26, name: "ARRI Master Prime 50mm", type: "Lenses", acc: "PL Mount, High Speed", rate: 600, image: "images/lenses/arri-master-prime-50.png" },
     { id: 27, name: "SmallHD 703 Bolt Monitor", type: "Support", acc: "Wireless RX, Sun Hood", rate: 40, image: "images/support/smallhd-703.png" },
+    { id: 28, name: "Panasonic S1H", type: "Camera Body", acc: "L-mount, 2x Batteries, Extra Cards", rate: 150, image: "images/cameras/panasonic-s1h.png" },
+    { id: 29, name: "Tamron 24-70mm f/2.8", type: "Lenses", acc: "L-mount, Weather Sealed", rate: 55, image: "images/lenses/tamron-24-70.png" },
+    { id: 30, name: "LEDGO 1200 RGB", type: "Lighting", acc: "DMX Control, Battery Powered", rate: 85, image: "images/lighting/ledgo-1200.png" },
+    { id: 31, name: "Cartoni Lambda Tripod", type: "Support", acc: "Mid-level Head, Spreader", rate: 110, image: "images/support/cartoni-lambda.png" },
+    { id: 32, name: "GoPro Hero 12 Black", type: "Camera Body", acc: "Waterproof, 2x Batteries, Mounts", rate: 45, image: "images/cameras/gopro-12.png" },
+    { id: 33, name: "Rokinon Cine DS 35mm", type: "Lenses", acc: "T/1.5, Canon EF Mount", rate: 75, image: "images/lenses/rokinon-35.png" },
+    { id: 34, name: "Neewer LED Softbox Kit", type: "Lighting", acc: "2x 960 Panel Kit, Stands, Softboxes", rate: 65, image: "images/lighting/neewer-softbox.png" },
+    { id: 35, name: "Rode Lav Wireless System", type: "Audio", acc: "2-Channel Wireless, Lavalier Mics", rate: 55, image: "images/audio/rode-wireless.png" },
+    { id: 36, name: "Matthews C-Stand Heavy Duty", type: "Support", acc: "20ft Arm, Grip Head, T-Bone", rate: 35, image: "images/support/matthews-c-stand.png" },
+    { id: 37, name: "Phantom 4 Pro Cine", type: "Support", acc: "Pro Cine, 2x Batteries, 3x Props", rate: 320, image: "images/support/phantom-4-pro.png" },
+    { id: 38, name: "Pearl & Dean Premium DSM", type: "Lighting", acc: "2x Lighting Kit, Soft Cases", rate: 140, image: "images/lighting/pearl-dean-premium.png" },
+    { id: 39, name: "Shure SM7B Microphone", type: "Audio", acc: "XLR Cable, Pop Filter, Shock Mount", rate: 40, image: "images/audio/shure-sm7b.png" },
+    { id: 40, name: "Glidecam HD-4000 Stabilizer", type: "Support", acc: "Counterweight Vest, Case", rate: 95, image: "images/support/glidecam-hd4000.png" },
 ];
 
 const quoteList = {}; // map of itemId -> quantity
 
+const favoriteList = {}; // map of itemId -> 1 if favorited
+let currentDetailsId = null; // track which item is being viewed in details modal
+
+// Load favorites from localStorage
+function loadFavorites() {
+    try {
+        const raw = localStorage.getItem('favoritesList');
+        if (!raw) return;
+        const parsed = JSON.parse(raw);
+        if (parsed && typeof parsed === 'object') {
+            Object.assign(favoriteList, parsed);
+        }
+    } catch (e) { /* ignore */ }
+}
+
+function saveFavorites() {
+    try { localStorage.setItem('favoritesList', JSON.stringify(favoriteList)); } catch (e) { /* ignore */ }
+}
+
+// Toggle favorite status
+function toggleFavorite(id = null) {
+    const itemId = id || currentDetailsId;
+    if (!itemId) return;
+    if (favoriteList[itemId]) {
+        delete favoriteList[itemId];
+    } else {
+        favoriteList[itemId] = 1;
+    }
+    saveFavorites();
+    updateCardFavorites();
+    if (currentDetailsId === itemId) updateDetailsModal();
+}
+
+// Update favorite heart icons on cards
+function updateCardFavorites() {
+    document.querySelectorAll('.btn-favorite').forEach(btn => {
+        const id = Number(btn.dataset.id);
+        if (favoriteList[id]) {
+            btn.classList.add('active');
+            btn.textContent = '❤';
+        } else {
+            btn.classList.remove('active');
+            btn.textContent = '♡';
+        }
+    });
+}
 // Persistence helpers
 function saveQuote() {
     try { localStorage.setItem('quoteList', JSON.stringify(quoteList)); } catch (e) { /* ignore */ }
@@ -73,11 +132,12 @@ function makePlaceholder(name, type) {
 function displayGear(items) {
     const grid = document.getElementById('gearGrid');
     grid.innerHTML = items.map(item => `
-        <div class="card">
+        <div class="card" onclick="openDetailsModal(${item.id})" style="cursor: pointer;">
             <div class="card-img-container">
                 <img src="${item.image}" loading="lazy" alt="${item.name}" onerror="this.onerror=null;this.src='${makePlaceholder(item.name, item.type)}'">
             </div>
             <span class="item-badge" data-id="${item.id}"></span>
+            <button class="btn-favorite" data-id="${item.id}" onclick="event.stopPropagation(); toggleFavorite(${item.id}); updateCardFavorites(); updateFavoritesCount();" style="position: absolute; top: 12px; left: 12px; width: 40px; height: 40px; background: rgba(0,0,0,0.6); border: none; border-radius: 50%; color: white; font-size: 1.2rem; cursor: pointer; z-index: 10;">♡</button>
             <div class="card-content">
                 <div class="card-title">${item.name}</div>
                 <div class="card-acc">${item.acc}</div>
@@ -88,14 +148,14 @@ function displayGear(items) {
                         if (qty > 0) {
                             return `
                                 <div class="card-controls">
-                                    <button class="control-btn" onclick="changeQty(${item.id}, -1)" aria-label="Decrease quantity">−</button>
+                                    <button class="control-btn" onclick="event.stopPropagation(); changeQty(${item.id}, -1)" aria-label="Decrease quantity">−</button>
                                     <span class="qty-display" data-id="${item.id}">${qty}</span>
-                                    <button class="control-btn" onclick="changeQty(${item.id}, 1)" aria-label="Increase quantity">+</button>
-                                    <button class="btn-remove-card" onclick="removeFromQuote(${item.id})" aria-label="Remove from quote">Remove</button>
+                                    <button class="control-btn" onclick="event.stopPropagation(); changeQty(${item.id}, 1)" aria-label="Increase quantity">+</button>
+                                    <button class="btn-remove-card" onclick="event.stopPropagation(); removeFromQuote(${item.id})" aria-label="Remove from quote">Remove</button>
                                 </div>
                             `;
                         } else {
-                            return `<button class="btn-add" onclick="addToQuote(${item.id})">Add to Quote</button>`;
+                            return `<button class="btn-add" onclick="event.stopPropagation(); addToQuote(${item.id})">Add to Quote</button>`;
                         }
                     })()}
                 </div>
@@ -126,9 +186,9 @@ function filterCategory(cat, el) {
 // QUOTE LIST (add/remove/qty)
 function updateQuoteBadge() {
     const count = Object.values(quoteList).reduce((s, q) => s + q, 0);
-    const btn = document.getElementById('quoteBtn');
+    const btn = document.getElementById('cartCount');
     if (!btn) return;
-    btn.innerText = `Quote List (${count})`;
+    btn.innerText = count;
 }
 
 function addToQuote(id) {
@@ -166,6 +226,7 @@ function removeFromQuote(id) {
     updateQuoteBadge();
     saveQuote();
     renderModalSummary();
+    updateCardBadges();
 }
 
 function changeQty(id, delta) {
@@ -186,7 +247,7 @@ function renderModalSummary() {
     const container = document.getElementById('modalSummary');
     const ids = Object.keys(quoteList).map(Number);
     if (ids.length === 0) {
-        container.innerHTML = '<p>No items in your quote.</p>';
+        container.innerHTML = '<p style="text-align: center; color: var(--text-muted);">No items in your quote list.</p>';
         return;
     }
     let total = 0;
@@ -196,22 +257,23 @@ function renderModalSummary() {
         const lineTotal = item.rate * qty;
         total += lineTotal;
         return `
-            <div class="quote-item" style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid #eee;">
-                <div style="flex:1">
-                    <div style="font-weight:600">${item.name}</div>
-                    <div style="font-size:0.9rem;color:#666">${item.acc} — $${item.rate}/day</div>
+            <div class="quote-item">
+                <div class="quote-item-info">
+                    <div class="quote-item-name">${item.name}</div>
+                    <div style="display: flex; gap: 0.5rem; align-items: center;">
+                        <button class="btn-qty" onclick="changeQty(${id}, -1)">−</button>
+                        <span style="min-width: 25px; text-align: center; font-weight: 600;">${qty}</span>
+                        <button class="btn-qty" onclick="changeQty(${id}, 1)">+</button>
+                        <span style="color: var(--text-muted); margin-left: 1rem;">@ $${item.rate}/day</span>
+                    </div>
                 </div>
-                <div style="display:flex;gap:8px;align-items:center;margin-left:12px">
-                    <button class="btn-qty" onclick="changeQty(${id}, -1)">−</button>
-                    <span>${qty}</span>
-                    <button class="btn-qty" onclick="changeQty(${id}, 1)">+</button>
-                    <div style="width:12px"></div>
-                    <div style="font-weight:600">$${lineTotal}</div>
-                    <button class="btn-remove" onclick="removeFromQuote(${id})" style="margin-left:8px">Remove</button>
+                <div style="display: flex; align-items: center; gap: 1rem;">
+                    <div style="text-align: right; min-width: 60px; font-weight: 700; color: var(--accent-gold);">$${lineTotal}</div>
+                    <button class="btn-remove" onclick="removeFromQuote(${id})">✕</button>
                 </div>
             </div>
         `;
-    }).join('') + `<div style="text-align:right;margin-top:10px;font-weight:700">Total/day: $${total}</div>`;
+    }).join('') + `<div class="quote-total">Total/day: $${total}</div>`;
 }
 
 function toggleModal() { modal.style.display = "none"; }
@@ -252,6 +314,7 @@ document.getElementById('quoteForm').onsubmit = async (e) => {
     const email = document.getElementById('email').value.trim();
     const startDate = document.getElementById('startDate').value;
     const endDate = document.getElementById('endDate').value;
+    const location = document.getElementById('location').value;
     const items = Object.keys(quoteList).map(id => {
         const item = inventory.find(i => i.id === Number(id));
         return { id: Number(id), name: item ? item.name : '', qty: quoteList[id], rate: item ? item.rate : 0 };
@@ -267,6 +330,7 @@ document.getElementById('quoteForm').onsubmit = async (e) => {
         `Email: ${email}`,
         `Start: ${startDate}`,
         `End: ${endDate}`,
+        `Location: ${location}`,
         '',
         'Items:',
         itemsText,
@@ -322,10 +386,10 @@ function updateCardBadges() {
             if (!existingControls) {
                 footer.insertAdjacentHTML('beforeend', `
                     <div class="card-controls">
-                        <button class="control-btn" onclick="changeQty(${id}, -1)" aria-label="Decrease quantity">−</button>
+                        <button class="control-btn" onclick="event.stopPropagation(); changeQty(${id}, -1)" aria-label="Decrease quantity">−</button>
                         <span class="qty-display" data-id="${id}">${qty}</span>
-                        <button class="control-btn" onclick="changeQty(${id}, 1)" aria-label="Increase quantity">+</button>
-                        <button class="btn-remove-card" onclick="removeFromQuote(${id})" aria-label="Remove from quote">Remove</button>
+                        <button class="control-btn" onclick="event.stopPropagation(); changeQty(${id}, 1)" aria-label="Increase quantity">+</button>
+                        <button class="btn-remove-card" onclick="event.stopPropagation(); removeFromQuote(${id})" aria-label="Remove from quote">Remove</button>
                     </div>
                 `);
             } else {
@@ -337,7 +401,7 @@ function updateCardBadges() {
             // qty is zero: remove controls and show Add button
             if (existingControls) existingControls.remove();
             if (!existingAdd) {
-                footer.insertAdjacentHTML('beforeend', `<button class="btn-add" onclick="addToQuote(${id})">Add to Quote</button>`);
+                footer.insertAdjacentHTML('beforeend', `<button class="btn-add" onclick="event.stopPropagation(); addToQuote(${id})">Add to Quote</button>`);
             }
         }
     });
