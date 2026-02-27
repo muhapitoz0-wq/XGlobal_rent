@@ -2,7 +2,7 @@
 
 // Add stock property to each inventory item
 function addStockStatus() {
-    const stocks = ['Available','Available','Limited','Available','Limited','Available','Available','Available','Limited','Available','Available','Available','Limited','Available','Available','Available','Available','Limited','Available','Available','Available','Available','Available','Limited','Available','Available','Available'];
+    const stocks = ['Available','Available','Limited','Available','Limited','Available','Available','Available','Limited','Available','Available','Available','Limited','Available','Available','Available','Available','Limited','Available','Available','Available','Available','Available','Limited','Available','Available','Available','Limited','Available','Available','Available','Limited','Available','Limited','Available','Limited','Available','Available','Limited','Available'];
     if (typeof inventory === 'undefined' || !Array.isArray(inventory)) return;
     inventory.forEach((item, idx) => {
         item.stock = item.stock || (stocks[idx] || 'Available');
