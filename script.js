@@ -241,7 +241,8 @@ function changeQty(id, delta) {
 
 // MODAL LOGIC
 const modal = document.getElementById("quoteModal");
-const API_ENDPOINT = 'https://example.com/api/quotes'; // replace with real endpoint
+// NOTE: Update this with your actual backend endpoint or keep WhatsApp for submission
+const API_ENDPOINT = 'https://api.yourdomain.com/api/quotes'; // TODO: Replace with actual endpoint
 
 function renderModalSummary() {
     const container = document.getElementById('modalSummary');
@@ -306,19 +307,47 @@ document.getElementById('quoteBtn').onclick = () => {
 document.getElementById('quoteForm').onsubmit = async (e) => {
     e.preventDefault();
     const form = e.target;
-    const submitBtn = form.querySelector('.btn-submit');
-    const originalText = submitBtn ? submitBtn.innerText : '';
-    if (submitBtn) { submitBtn.disabled = true; submitBtn.innerText = 'Sending...'; }
-
+    
+    // Form validation
     const name = document.getElementById('fullName').value.trim();
     const email = document.getElementById('email').value.trim();
     const startDate = document.getElementById('startDate').value;
     const endDate = document.getElementById('endDate').value;
     const location = document.getElementById('location').value;
+    
+    if (!name || !email || !startDate || !endDate || !location) {
+        showToast('Please fill in all required fields');
+        return;
+    }
+    
+    // Email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+        showToast('Please enter a valid email address');
+        return;
+    }
+    
+    // Date validation
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+    if (end <= start) {
+        showToast('End date must be after start date');
+        return;
+    }
+    
     const items = Object.keys(quoteList).map(id => {
         const item = inventory.find(i => i.id === Number(id));
         return { id: Number(id), name: item ? item.name : '', qty: quoteList[id], rate: item ? item.rate : 0 };
     });
+    
+    if (items.length === 0) {
+        showToast('Please add items to your quote first');
+        return;
+    }
+    
+    const submitBtn = form.querySelector('[type="submit"]');
+    const originalText = submitBtn ? submitBtn.innerText : '';
+    if (submitBtn) { submitBtn.disabled = true; submitBtn.innerText = 'Sending...'; }
 
     // Build a human-readable message and open WhatsApp with it
     const waNumber = '201030554531'; // destination WhatsApp number (no +)
@@ -345,7 +374,7 @@ document.getElementById('quoteForm').onsubmit = async (e) => {
         showToast('Opening WhatsApp with your quote...');
         clearQuote();
         if (form.reset) form.reset();
-        toggleModal();
+        setTimeout(() => toggleModal(), 1500);
     } catch (err) {
         showToast('Could not open WhatsApp: ' + err.message);
     } finally {

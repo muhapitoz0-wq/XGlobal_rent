@@ -157,7 +157,6 @@ if (typeof displayGear === 'function') {
                 </div>
                 <span class="item-badge" data-id="${item.id}"></span>
                 <button class="btn-favorite" data-id="${item.id}" onclick="event.stopPropagation(); toggleFavorite(${item.id}); updateCardFavorites(); updateFavoritesCount();">♡</button>
-                ${item.stock ? `<span class="stock-badge stock-${(item.stock||'Available').toLowerCase()}">${item.stock}</span>` : ''}
                 <div class="card-content">
                     <div class="card-title">${item.name}</div>
                     <div class="card-acc">${item.acc}</div>
@@ -209,7 +208,7 @@ function addFavoritesButton() {
 // Initialization
 function initializeEnhancedFeatures() {
     addStockStatus();
-    try { if (typeof loadFavorites === 'function') loadFavorites(); } catch(e){}
+    loadFavorites();
     addFavoritesButton();
     // modal overlay click handlers
     const detModal = document.getElementById('detailsModal'); if (detModal) detModal.addEventListener('click', e => { if (e.target === detModal) closeDetailsModal(); });
@@ -227,7 +226,7 @@ function initializeEnhancedFeatures() {
 
     // Loading skeleton: show briefly then render gear
     showSkeleton(6);
-    setTimeout(() => { try { displayGear(inventory); } catch(e) {} }, 300);
+    setTimeout(() => { try { displayGear(inventory); } catch(e) { console.error('Error displaying gear:', e); } }, 300);
 }
 
 // Scroll to top helper
